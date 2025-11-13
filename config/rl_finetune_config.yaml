@@ -1,0 +1,102 @@
+# RL Fine-tuning Configuration (BC initialized)
+
+# Environment
+environment:
+  name: "Go1-v0"
+  render: false
+  max_episode_steps: 1000
+  control_frequency: 16  # Hz
+  
+  # Physics
+  physics:
+    timestep: 0.004167  # 1/240
+    gravity: -9.81
+  
+  # Reward function
+  reward:
+    type: "hybrid"  # "task", "hybrid", or "adaptive"
+    
+    # Task reward (forward velocity)
+    velocity_weight: 10.0
+    target_velocity: 1.0  # m/s
+    
+    # Gait preservation reward
+    gait_weight: 5.0
+    bc_policy_path: "models/bc/bc_policy.pth"
+    
+    # Stability rewards
+    orientation_weight: 2.0
+    height_weight: 10.0
+    target_height: 0.28  # m
+    
+    # Energy penalty
+    energy_weight: 0.01
+    
+    # Alive bonus
+    alive_bonus: 0.1
+    
+    # Hybrid reward weights
+    alpha_task: 0.7     # Weight for task reward
+    alpha_gait: 0.3     # Weight for gait preservation
+    
+    # Adaptive weighting (if type="adaptive")
+    adaptive:
+      initial_alpha_gait: 0.9
+      final_alpha_gait: 0.1
+      decay_rate: 0.99999
+      decay_interval: 1000  # steps
+
+  # Termination conditions
+  termination:
+    height_threshold: 0.15  # m (terminate if too low)
+    roll_threshold: 0.5     # rad
+    pitch_threshold: 0.5    # rad
+    distance_threshold: 5.0 # m (max distance from origin)
+
+# PPO Algorithm
+ppo:
+  policy: "MlpPolicy"
+  learning_rate: 0.0003
+  n_steps: 2048
+  batch_size: 64
+  n_epochs: 10
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_range: 0.2
+  clip_range_vf: null
+  normalize_advantage: true
+  ent_coef: 0.0
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  
+  # Policy network
+  policy_kwargs:
+    net_arch:
+      - 256
+      - 256
+    activation_fn: "relu"
+    ortho_init: true
+
+# Training
+training:
+  total_timesteps: 3000000
+  n_envs: 16  # Parallel environments
+  eval_freq: 50000
+  eval_episodes: 10
+  save_freq: 100000
+  
+  # BC initialization
+  load_bc_policy: true
+  bc_policy_path: "models/bc/bc_policy.pth"
+  freeze_bc_layers: false  # Whether to freeze some BC layers initially
+
+# Logging
+logging:
+  log_dir: "results/logs/rl_finetune"
+  tensorboard: true
+  save_dir: "models/rl"
+  verbose: 1
+
+# Device
+device: "cuda"
+seed: 42

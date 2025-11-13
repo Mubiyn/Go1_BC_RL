@@ -1,0 +1,82 @@
+# RL from Scratch Configuration (Baseline)
+
+# Environment
+environment:
+  name: "Go1-v0"
+  render: false
+  max_episode_steps: 1000
+  control_frequency: 16  # Hz
+  
+  # Physics
+  physics:
+    timestep: 0.004167  # 1/240
+    gravity: -9.81
+  
+  # Reward function (task only, no BC reference)
+  reward:
+    type: "task"
+    
+    # Task reward (forward velocity)
+    velocity_weight: 10.0
+    target_velocity: 1.0  # m/s
+    
+    # Stability rewards
+    orientation_weight: 2.0
+    height_weight: 10.0
+    target_height: 0.28  # m
+    
+    # Energy penalty
+    energy_weight: 0.001
+    
+    # Alive bonus
+    alive_bonus: 0.1
+
+  # Termination conditions
+  termination:
+    height_threshold: 0.15  # m (terminate if too low)
+    roll_threshold: 0.5     # rad
+    pitch_threshold: 0.5    # rad
+    distance_threshold: 5.0 # m (max distance from origin)
+
+# PPO Algorithm
+ppo:
+  policy: "MlpPolicy"
+  learning_rate: 0.0003
+  n_steps: 2048
+  batch_size: 64
+  n_epochs: 10
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_range: 0.2
+  clip_range_vf: null
+  normalize_advantage: true
+  ent_coef: 0.0
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  
+  # Policy network
+  policy_kwargs:
+    net_arch:
+      - 256
+      - 256
+    activation_fn: "relu"
+    ortho_init: true
+
+# Training
+training:
+  total_timesteps: 10000000  # Needs more steps than BC+RL
+  n_envs: 16  # Parallel environments
+  eval_freq: 100000
+  eval_episodes: 10
+  save_freq: 100000
+
+# Logging
+logging:
+  log_dir: "results/logs/rl_scratch"
+  tensorboard: true
+  save_dir: "models/rl"
+  verbose: 1
+
+# Device
+device: "cuda"
+seed: 42

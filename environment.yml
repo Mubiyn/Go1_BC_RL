@@ -1,0 +1,53 @@
+name: go1_bc_rl
+channels:
+  - pytorch
+  - conda-forge
+  - defaults
+
+dependencies:
+  - python=3.8
+  - pip>=21.0
+  
+  # Core scientific computing
+  - numpy=1.23.5
+  - scipy=1.10.1
+  - pandas=1.5.3
+  
+  # Deep Learning (PyTorch)
+  - pytorch=1.12.1
+  - torchvision=0.13.1
+  - cudatoolkit=11.3  # Remove if CPU only
+  
+  # Visualization
+  - matplotlib=3.7.1
+  - seaborn=0.12.2
+  
+  # Jupyter
+  - jupyter=1.0.0
+  - ipykernel=6.22.0
+  - ipywidgets=8.0.6
+  
+  # Utilities
+  - pyyaml=6.0
+  - tqdm=4.65.0
+  - h5py=3.8.0
+  - pillow=9.4.0
+  - scikit-learn=1.2.2
+  
+  # Testing
+  - pytest=7.3.1
+  - pytest-cov=4.0.0
+  
+  # Install remaining packages via pip
+  - pip:
+    - stable-baselines3==1.7.0
+    - gym==0.26.2
+    - gymnasium==0.28.1
+    - pybullet==3.2.5
+    - opencv-python==4.7.0.72
+    - tensorboard==2.12.0
+    - imageio==2.27.0
+    - imageio-ffmpeg==0.4.8
+    - black==23.3.0
+    - flake8==6.0.0
+    - isort==5.12.0

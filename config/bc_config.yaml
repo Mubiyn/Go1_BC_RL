@@ -1,0 +1,56 @@
+# Behavior Cloning Training Configuration
+
+# Dataset
+data:
+  train_file: "data/processed/bc_dataset_train.npz"
+  val_file: "data/processed/bc_dataset_val.npz"
+  batch_size: 256
+  shuffle: true
+  num_workers: 4
+
+# Model Architecture
+model:
+  state_dim: 48
+  action_dim: 12
+  hidden_dims: [256, 256]
+  activation: "relu"
+  output_activation: "tanh"
+  dropout: 0.0
+
+# Training
+training:
+  epochs: 100
+  learning_rate: 0.001
+  optimizer: "adam"
+  weight_decay: 0.0001
+  lr_scheduler: "cosine"
+  lr_warmup_epochs: 5
+  
+  # Early stopping
+  early_stopping: true
+  patience: 15
+  min_delta: 0.0001
+  
+  # Gradient clipping
+  grad_clip: 1.0
+  
+  # Loss function
+  loss: "mse"  # Mean squared error
+
+# Logging
+logging:
+  log_dir: "results/logs/bc"
+  save_dir: "models/bc"
+  save_best_only: true
+  log_interval: 10  # Log every N batches
+  val_interval: 1   # Validate every N epochs
+  
+# Data Augmentation (optional)
+augmentation:
+  enabled: false
+  mirror_lr: false  # Mirror left-right
+  noise_std: 0.0    # Add Gaussian noise to observations
+
+# Device
+device: "cuda"  # "cuda" or "cpu"
+seed: 42
